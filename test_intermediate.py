@@ -14,12 +14,14 @@ from data import BATCH_SIZE, IMG_HEIGHT, IMG_WIDTH, my_data
 autoencoder = tf.keras.models.load_model("my_model")
 
 encoder = Model(autoencoder.input, autoencoder.layers[-2].output)
+encoder.summary()
 decoder_input = Input(shape=(256,))
 decoder = Model(decoder_input, autoencoder.layers[-1](decoder_input))
+decoder.summary()
 
 train_ds, val_ds = my_data()
 
-files = glob.glob("images\\source\\*.jpg")
+files = glob.glob("./archive/images/*.jpg")
 num_batches = int(len(files) / BATCH_SIZE)
 if len(files) % BATCH_SIZE != 0:
     print("Source and Target Files should be a multiple of Batch Size")
