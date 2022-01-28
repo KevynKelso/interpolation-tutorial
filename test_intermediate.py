@@ -80,3 +80,21 @@ for i in range(1):
         # ax.axis("off")
         if j == 50:
             break
+
+src_x = np.zeros((num_imgs, 256))
+target_x = np.zeros((num_imgs, 256))
+for i in range(int(num_batches)):
+    src_x[i * BATCH_SIZE : i * BATCH_SIZE + BATCH_SIZE, :] = src_latent[i]
+    target_x[i * BATCH_SIZE : i * BATCH_SIZE + BATCH_SIZE, :] = target_latent[i]
+x = np.linspace(src_x, target_x, 100)
+inter_imgs = np.zeros((100, num_imgs, IMG_WIDTH, IMG_HEIGHT, 3))
+for i in range(100):
+    inter_imgs[i, :, :, :, :] = decoder.predict(x[i, :, :])
+
+# fig = plt.figure(figsize=(10, 40))
+for j in range(BATCH_SIZE):
+    for i in range(0, 100, 10):
+        # ax = fig.add_subplot(BATCH_SIZE,10,int(10*j+i/10+1))
+        plt.imsave(
+            f"interpolate-{i}-{j}.png", (inter_imgs[i, j, :, :] * 255).astype(np.uint8)
+        )
