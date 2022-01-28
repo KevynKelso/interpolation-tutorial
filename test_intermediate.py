@@ -47,6 +47,10 @@ for i in range(len(files)):
     target = target.resize((IMG_WIDTH, IMG_HEIGHT))
     target_arr = np.array(target) / 255
 
+    # for some reason there's garbage in this dataset
+    if src_arr.shape != (128, 128, 3):
+        continue
+
     src_batch[img_nr, :, :, :] = src_arr
     target_batch[img_nr, :, :, :] = target_arr
     img_nr = img_nr + 1
