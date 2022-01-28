@@ -17,14 +17,15 @@ autoencoder = load_model("my_model")
 z = autoencoder.layers[10]
 encoder = Model(autoencoder.input, z.output)
 encoder.summary()
-# decoder_input = Input(K.int_shape(z)[1:])
-decoder = Model(autoencoder.layers[11].input, autoencoder.layers[-1].output)
+decoder = autoencoder.layers[11]
 decoder.summary()
 
 train_ds, val_ds = my_data()
 
-files = glob.glob("./archive/images/*.jpg")
+files = glob.glob("./archive/images/*.jpg")[0:BATCH_SIZE]
 num_batches = int(len(files) / BATCH_SIZE)
+
+print(len(files))
 if len(files) % BATCH_SIZE != 0:
     print("Source and Target Files should be a multiple of Batch Size")
 
