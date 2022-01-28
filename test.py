@@ -15,4 +15,4 @@ for input_images, output_images in val_ds.take(1):
         reconst = reconst_vec[i, :, :, :] * 255
         reconst = np.array(reconst)
         reconst = reconst.astype(np.uint8)
-        plt.imsave(f"im{i}.png", np.concatenate((input_img, input_img), axis=1))
+        plt.imsave(f"im{i}.png", np.concatenate((input_img, reconst), axis=1))
