@@ -7,13 +7,13 @@ import tensorflow as tf
 from matplotlib import pyplot as plt
 from PIL import Image
 from tensorflow.keras.layers import Input
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model, load_model
 
 from data import BATCH_SIZE, IMG_HEIGHT, IMG_WIDTH, my_data
 
-autoencoder = tf.keras.models.load_model("my_model")
+autoencoder = load_model("my_model")
 
-encoder = Model(autoencoder.input, autoencoder.layers[-2].output)
+encoder = Model(autoencoder.input, autoencoder.layers[10].output)
 encoder.summary()
 decoder_input = Input(shape=(256,))
 decoder = Model(decoder_input, autoencoder.layers[-1](decoder_input))
@@ -40,7 +40,7 @@ for i in range(len(files)):
     source = source.resize((IMG_WIDTH, IMG_HEIGHT))
     src_arr = np.array(source) / 255
 
-    target = Image.open("images\\target\\" + os.path.basename(files[i]))
+    target = Image.open("./archive/images/" + os.path.basename(files[i]))
     target = target.resize((IMG_WIDTH, IMG_HEIGHT))
     target_arr = np.array(target) / 255
 
