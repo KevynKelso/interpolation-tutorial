@@ -47,7 +47,7 @@ def vae():
     # sample vector from the latent distribution
     z = Lambda(sampling)([z_mu, z_log_sigma])
 
-    # encoder = Model(input_img, z)
+    encoder = Model(input_img, z)
     # decoder takes the latent distribution sample as input
     decoder_input = Input(K.int_shape(z)[1:])
     x = Dense(
