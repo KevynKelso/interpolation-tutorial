@@ -4,6 +4,7 @@ import sys
 
 import numpy as np
 import tensorflow as tf
+import tensorflow.keras.backend as K
 from matplotlib import pyplot as plt
 from PIL import Image
 from tensorflow.keras.layers import Input
@@ -13,9 +14,10 @@ from data import BATCH_SIZE, IMG_HEIGHT, IMG_WIDTH, my_data
 
 autoencoder = load_model("my_model")
 
-encoder = Model(autoencoder.input, autoencoder.layers[10].output)
+z = autoencoder.layers[10]
+encoder = Model(autoencoder.input, z.output)
 encoder.summary()
-decoder_input = Input(shape=(256,))
+decoder_input = Input(K.int_shape(z)[1:])
 decoder = Model(decoder_input, autoencoder.layers[-1](decoder_input))
 decoder.summary()
 
