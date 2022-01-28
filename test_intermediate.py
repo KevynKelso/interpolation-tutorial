@@ -4,13 +4,14 @@ import sys
 
 import numpy as np
 import tensorflow as tf
+from matplotlib import pyplot as plt
 from PIL import Image
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Model
 
 from data import BATCH_SIZE, IMG_HEIGHT, IMG_WIDTH, my_data
 
-autoencoder = tf.keras.models.load_model("my_vae")
+autoencoder = tf.keras.models.load_model("my_model")
 
 encoder = Model(autoencoder.input, autoencoder.layers[-2].output)
 decoder_input = Input(shape=(256,))
@@ -60,12 +61,17 @@ for i in range(1):
     target_img = decoder.predict(target_latent[i])
     mid_img = decoder.predict(mid_latent)
     for j in range(BATCH_SIZE):
-        ax = fig.add_subplot(num_imgs, 3, i * BATCH_SIZE + 3 * j + 1)
-        plt.imshow((src_img[j] * 255).astype(np.uint8))
-        ax.axis("off")
-        ax = fig.add_subplot(num_imgs, 3, i * BATCH_SIZE + 3 * j + 2)
-        plt.imshow((mid_img[j] * 255).astype(np.uint8))
-        ax.axis("off")
-        ax = fig.add_subplot(num_imgs, 3, i * BATCH_SIZE + 3 * j + 3)
-        plt.imshow((target_img[j] * 255).astype(np.uint8))
-        ax.axis("off")
+        # ax = fig.add_subplot(num_imgs, 3, i * BATCH_SIZE + 3 * j + 1)
+        # plt.imshow((src_img[j] * 255).astype(np.uint8))
+        plt.imsave(f"src-{j}", (src_img[j] * 255).astype(np.uint8))
+        # ax.axis("off")
+        # ax = fig.add_subplot(num_imgs, 3, i * BATCH_SIZE + 3 * j + 2)
+        # plt.imshow((mid_img[j] * 255).astype(np.uint8))
+        plt.imsave(f"mid-{j}", (mid_img[j] * 255).astype(np.uint8))
+        # ax.axis("off")
+        # ax = fig.add_subplot(num_imgs, 3, i * BATCH_SIZE + 3 * j + 3)
+        # plt.imshow((target_img[j] * 255).astype(np.uint8))
+        plt.imsave(f"target-{j}", (target_img[j] * 255).astype(np.uint8))
+        # ax.axis("off")
+        if j == 50:
+            break
