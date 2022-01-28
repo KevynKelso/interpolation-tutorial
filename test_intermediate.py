@@ -5,12 +5,11 @@ import sys
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras.backend as K
+from data import BATCH_SIZE, IMG_HEIGHT, IMG_WIDTH, my_data
 from matplotlib import pyplot as plt
 from PIL import Image
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Model, load_model
-
-from data import BATCH_SIZE, IMG_HEIGHT, IMG_WIDTH, my_data
 
 autoencoder = load_model("my_model")
 
@@ -43,7 +42,7 @@ for i in range(len(files)):
     source = source.resize((IMG_WIDTH, IMG_HEIGHT))
     src_arr = np.array(source) / 255
 
-    target = Image.open("./archive/images/" + os.path.basename(files[i]))
+    target = Image.open("./archive/images/" + os.path.basename(files[i + 1]))
     target = target.resize((IMG_WIDTH, IMG_HEIGHT))
     target_arr = np.array(target) / 255
 
