@@ -17,7 +17,7 @@ autoencoder = load_model("my_model")
 z = autoencoder.layers[10]
 encoder = Model(autoencoder.input, z.output)
 encoder.summary()
-decoder_input = Input(K.int_shape(z)[1:])
+decoder_input = Input(K.int_shape(z.input)[1:])
 decoder = Model(decoder_input, autoencoder.layers[-1](decoder_input))
 decoder.summary()
 
