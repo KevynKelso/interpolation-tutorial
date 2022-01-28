@@ -99,19 +99,14 @@ def vae():
         monitor="val_loss", min_delta=0, patience=10, verbose=5, mode="auto"
     )
 
-    if path.exists("./checkpoints"):
-        vae.load_weights("./checkpoints/vae")
-    else:
-        history = vae.fit(
-            train_ds,
-            epochs=50,
-            validation_data=val_ds,
-            callbacks=[early_stopping],
-            verbose=1,
-        )
-        plt.plot(history.history["loss"])
-        plt.plot(history.history["val_loss"])
-        vae.save_weights("./checkpoints/vae")
+    vae.fit(
+        train_ds,
+        epochs=50,
+        validation_data=val_ds,
+        callbacks=[early_stopping],
+        verbose=1,
+    )
+    vae.save("my_model")
 
 
 if __name__ == "__main__":
