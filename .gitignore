@@ -131,3 +131,5 @@ dmypy.json
 /archive/**
 .DS_Store
 vae_output/**
+*.h5
+my_model/*

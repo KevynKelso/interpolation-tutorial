@@ -5,11 +5,12 @@ import sys
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras.backend as K
-from data import BATCH_SIZE, IMG_HEIGHT, IMG_WIDTH, my_data
 from matplotlib import pyplot as plt
 from PIL import Image
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Model, load_model
+
+from data import BATCH_SIZE, IMG_HEIGHT, IMG_WIDTH, my_data
 
 autoencoder = load_model("my_model")
 
@@ -55,6 +56,8 @@ for i in range(len(files)):
     img_nr = img_nr + 1
 
     if i % (BATCH_SIZE - 1) == 0 and i > 0:
+        print(encoder(src_batch))
+
         src_latent.append(encoder(src_batch))
         target_latent.append(encoder(target_batch))
         src_batch = np.zeros((BATCH_SIZE, IMG_WIDTH, IMG_HEIGHT, 3))

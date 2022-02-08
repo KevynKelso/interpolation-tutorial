@@ -14,7 +14,8 @@ from data import my_data
 
 
 def vae():
-    latent_dim = 256  # Number of latent dimension parameters
+    model_name = "bigVAE_128"
+    latent_dim = 128  # Number of latent dimension parameters
 
     input_img = Input(shape=(128, 128, 3))
 
@@ -94,19 +95,22 @@ def vae():
     vae.summary()
 
     train_ds, val_ds = my_data()
-    # run the model
     early_stopping = EarlyStopping(
         monitor="val_loss", min_delta=0, patience=10, verbose=5, mode="auto"
     )
+    # vae.load_weights("vae.h5")
 
-    vae.fit(
+    history = vae.fit(
         train_ds,
         epochs=50,
         validation_data=val_ds,
         callbacks=[early_stopping],
         verbose=1,
     )
-    vae.save("my_model")
+    vae.save(f"{model_name}.h5")
+
+    with open(f"{model_name}_history.txt", "w") as f:
+        f.write(history)
 
 
 if __name__ == "__main__":
