@@ -9,9 +9,11 @@ from tensorflow.keras.models import Model, load_model
 
 from data import IMG_HEIGHT, IMG_WIDTH
 
+g_latent = []
+
 
 def get_vae():
-    autoencoder = load_model("./my_model")
+    autoencoder = load_model("./bigVAE_128")
     z = autoencoder.layers[10]
 
     encoder = Model(autoencoder.input, z.output)
@@ -44,7 +46,7 @@ def run_input_output_imgs(encoder, decoder, file):
     return tk_img_input, tk_img_output, latent
 
 
-def map_scales_to_latent_vec(scales, latent_vec):
+def set_scales_to_latent_vec(scales, latent_vec):
     latent_arr = np.array(latent_vec)
     for scale, latent_val in zip(scales, latent_arr):
         scale.set(latent_val)
@@ -54,16 +56,19 @@ def gui(files, encoder, decoder):
     ws = Tk()
 
     def change_img(input_img_label, output_img_label, scales, length):
+        global g_latent
         input_img, output_img, latent = run_input_output_imgs(
             encoder, decoder, files[random.randint(0, length - 1)]
         )
+
+        g_latent = latent
 
         input_img_label.configure(image=input_img)
         output_img_label.configure(image=output_img)
         input_img_label.image = input_img  # prevents garbage collection
         output_img_label.image = output_img
 
-        map_scales_to_latent_vec(scales, latent)
+        set_scales_to_latent_vec(scales, g_latent)
 
     def decode_new_latent(output_img, scales):
         # need to build latent vector from scale values
@@ -76,7 +81,7 @@ def gui(files, encoder, decoder):
         output_img.configure(image=tk_img_output)
         output_img.image = tk_img_output
 
-    img_default_input, img_default_output, latent = run_input_output_imgs(
+    img_default_input, img_default_output, g_latent = run_input_output_imgs(
         encoder, decoder, files[0]
     )
 
@@ -94,18 +99,24 @@ def gui(files, encoder, decoder):
             showvalue=0,
             command=lambda _: decode_new_latent(output_image, scales),
         )
-        for _ in range(latent.shape[0])
+        for _ in range(g_latent.shape[0])
     ]
 
-    map_scales_to_latent_vec(scales, latent)
+    set_scales_to_latent_vec(scales, g_latent)
 
     button = Button(
         ws,
         text="Change source image",
         command=lambda: change_img(input_image, output_image, scales, len(files)),
     )
+    button2 = Button(
+        ws,
+        text="Reset sliders",
+        command=lambda: set_scales_to_latent_vec(scales, g_latent),
+    )
 
     button.grid(row=1, column=0)
+    button2.grid(row=3, column=0)
     input_image.grid(row=0, column=0)
     output_image.grid(row=2, column=0)
 

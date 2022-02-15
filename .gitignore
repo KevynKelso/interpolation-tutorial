@@ -133,3 +133,4 @@ dmypy.json
 vae_output/**
 *.h5
 my_model/*
+bigVAE_128/*

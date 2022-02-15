@@ -14,8 +14,8 @@ from data import my_data
 
 
 def vae():
-    model_name = "bigVAE_128"
-    latent_dim = 128  # Number of latent dimension parameters
+    model_name = "bigVAE_64"
+    latent_dim = 64  # Number of latent dimension parameters
 
     input_img = Input(shape=(128, 128, 3))
 
@@ -107,10 +107,10 @@ def vae():
         callbacks=[early_stopping],
         verbose=1,
     )
-    vae.save(f"{model_name}.h5")
+    vae.save(f"models/{model_name}.h5")
 
-    with open(f"{model_name}_history.txt", "w") as f:
-        f.write(history)
+    with open(f"histories/{model_name}.txt", "w") as f:
+        f.write(f"{history}")
 
 
 if __name__ == "__main__":
