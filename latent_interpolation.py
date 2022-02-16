@@ -12,8 +12,8 @@ from data import IMG_HEIGHT, IMG_WIDTH
 g_latent = []
 
 
-def get_vae():
-    autoencoder = load_model("./bigVAE_128")
+def get_vae(model_name):
+    autoencoder = load_model(model_name)
     z = autoencoder.layers[10]
 
     encoder = Model(autoencoder.input, z.output)
@@ -37,11 +37,18 @@ def encode_decode(encoder, decoder, img):
 
 
 def run_input_output_imgs(encoder, decoder, file):
-    img_pil = Image.open(file).resize((IMG_WIDTH, IMG_HEIGHT))
-    latent, output_img = encode_decode(encoder, decoder, img_pil)
+    input_img = Image.open(file).resize((IMG_WIDTH, IMG_HEIGHT))
+    latent, output_img = encode_decode(encoder, decoder, input_img)
+    output_img = Image.fromarray(output_img)
+
+    return input_img, output_img, latent
+
+
+def run_input_output_imgs_tk(encoder, decoder, file):
+    img_pil, output_img, latent = run_input_output_imgs(encoder, decoder, file)
 
     tk_img_input = ImageTk.PhotoImage(img_pil)
-    tk_img_output = ImageTk.PhotoImage(Image.fromarray(output_img))
+    tk_img_output = ImageTk.PhotoImage(output_img)
 
     return tk_img_input, tk_img_output, latent
 
@@ -57,7 +64,7 @@ def gui(files, encoder, decoder):
 
     def change_img(input_img_label, output_img_label, scales, length):
         global g_latent
-        input_img, output_img, latent = run_input_output_imgs(
+        input_img, output_img, latent = run_input_output_imgs_tk(
             encoder, decoder, files[random.randint(0, length - 1)]
         )
 
@@ -81,7 +88,7 @@ def gui(files, encoder, decoder):
         output_img.configure(image=tk_img_output)
         output_img.image = tk_img_output
 
-    img_default_input, img_default_output, g_latent = run_input_output_imgs(
+    img_default_input, img_default_output, g_latent = run_input_output_imgs_tk(
         encoder, decoder, files[0]
     )
 
@@ -128,7 +135,7 @@ def gui(files, encoder, decoder):
 
 
 def main():
-    encoder, decoder = get_vae()
+    encoder, decoder = get_vae("./models/bigVAE_64.h5")
     files = glob.glob("./archive/images/*.jpg")[:100]
     gui(files, encoder, decoder)
 
