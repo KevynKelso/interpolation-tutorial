@@ -25,7 +25,7 @@ def accordion_vae():
     # output image = (32,32,512)
     x = Conv2DTranspose(64, (3, 3), activation="relu", padding="same", strides=2)(x)
     # ouptup image = (64, 64, 256)
-    x = Conv2D(3, (3, 3), activation="sigmoid", padding="same")(x)
+    x = Conv2DTranspose(3, (3, 3), activation="sigmoid", padding="same", strides=2)(x)
     # ouptup image = (128, 128, 3)
 
     ae = Model(input_img, x)

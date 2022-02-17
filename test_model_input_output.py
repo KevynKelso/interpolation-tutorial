@@ -5,6 +5,10 @@ from PIL import Image, ImageDraw, ImageFont
 from latent_interpolation import (get_ae, get_vae, run_input_output_img_ae,
                                   run_input_output_imgs)
 
+IMG_WIDTH = 128
+IMG_HEIGHT = 128
+TEXT_SIZE = 20
+
 
 def test_normal_ae():
     files = glob("./archive/images/*.jpg")[:5]
@@ -13,6 +17,15 @@ def test_normal_ae():
     in_img, out_img = run_input_output_img_ae(ae, files[0])
     in_img.save("test1.jpg")
     out_img.save("test2.jpg")
+
+
+def write_image_column(new_image, images, col_num=0):
+    y_offset = TEXT_SIZE
+    for im in images:
+        new_image.paste(im, (y_offset, IMG_WIDTH * col_num))
+        y_offset += IMG_HEIGHT
+
+    return new_image
 
 
 def test_vae():
