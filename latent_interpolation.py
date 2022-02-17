@@ -50,7 +50,6 @@ def run_input_output_img_ae(ae, file):
     batch[0, :, :, :] = input_img_arr
 
     output = ae.predict(batch)[0]
-    print(output)
 
     output_img = Image.fromarray((output * 255).astype(np.uint8))
 

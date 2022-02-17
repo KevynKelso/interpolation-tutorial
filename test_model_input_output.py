@@ -8,21 +8,36 @@ from latent_interpolation import (get_ae, get_vae, run_input_output_img_ae,
 IMG_WIDTH = 128
 IMG_HEIGHT = 128
 TEXT_SIZE = 20
+COL_WIDTH = 5
 
 
 def test_normal_ae():
     files = glob("./archive/images/*.jpg")[:5]
     model_name = "./models/convAE_v1.h5"
     ae = get_ae(model_name)
-    in_img, out_img = run_input_output_img_ae(ae, files[0])
-    in_img.save("test1.jpg")
-    out_img.save("test2.jpg")
+
+    new_im = Image.new("RGB", ((IMG_WIDTH + COL_WIDTH) * 2, IMG_HEIGHT * 5 + TEXT_SIZE))
+
+    left_col = [run_input_output_img_ae(ae, f)[0] for f in files]
+    right_col = [run_input_output_img_ae(ae, f)[1] for f in files]
+
+    write_image_column(new_im, left_col)
+    write_image_column(new_im, right_col, col_num=1)
+
+    font = ImageFont.truetype("/Library/Fonts/Arial Unicode.ttf", 16)
+    draw = ImageDraw.Draw(new_im)
+    draw.text((20, 0), "Input", (255, 255, 255), font=font)
+
+    draw2 = ImageDraw.Draw(new_im)
+    draw2.text((133, 0), "Output", (255, 255, 255), font=font)
+
+    new_im.save("convAE_v1_inout.jpg")
 
 
 def write_image_column(new_image, images, col_num=0):
     y_offset = TEXT_SIZE
     for im in images:
-        new_image.paste(im, (y_offset, IMG_WIDTH * col_num))
+        new_image.paste(im, (IMG_WIDTH * col_num + COL_WIDTH * col_num, y_offset))
         y_offset += IMG_HEIGHT
 
     return new_image

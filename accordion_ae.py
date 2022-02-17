@@ -31,6 +31,7 @@ def accordion_vae():
     ae = Model(input_img, x)
     ae.compile(optimizer="adam", loss="mse")
     ae.summary()
+    return
 
     train_ds, val_ds = my_data()
     early_stopping = EarlyStopping(
