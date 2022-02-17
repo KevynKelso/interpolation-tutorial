@@ -1,36 +1,30 @@
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.layers import (BatchNormalization, Conv2D,
-                                     Conv2DTranspose, Input, MaxPooling2D,
-                                     UpSampling2D)
+                                     Conv2DTranspose, Input)
 from tensorflow.keras.models import Model
 
 from data import my_data
 
 
 def accordion_vae():
-    model_name = "convAE_v1"
+    model_name = "convAE_v2"
     # Encoder
     input_img = Input(shape=(128, 128, 3))
 
-    x = Conv2D(64, (3, 3), activation="relu", padding="same", strides=2)(input_img)
-    # output image = (64, 64, 64)
-    x = MaxPooling2D((2, 2), padding="same")(x)
-    # output image = (32,32,64)
-
-    x = Conv2D(32, (3, 3), activation="relu", padding="same", strides=2)(x)
-    # output image = (16, 16, 32)
-    x = MaxPooling2D((2, 2), padding="same")(x)
-    # output image = (8, 8, 32)
+    x = Conv2D(128, (3, 3), activation="relu", padding="same", strides=2)(input_img)
+    # output image = (64, 64, 128)
+    x = Conv2D(128, (3, 3), activation="relu", padding="same", strides=2)(x)
+    # output image = (32, 32, 128)
+    x = Conv2D(256, (3, 3), activation="relu", padding="same", strides=2)(x)
+    # output image = (16, 16, 256)
+    x = BatchNormalization()(x)  # No effect on output image
+    # output image = (16, 16, 256)
 
     # Decoder
-    x = Conv2DTranspose(32, (3, 3), activation="relu", padding="same", strides=2)(x)
-    # output image = (16,16,32)
-    x = UpSampling2D((2, 2))(x)
-    # ouptup image = (32, 32, 32)
+    x = Conv2DTranspose(128, (3, 3), activation="relu", padding="same", strides=2)(x)
+    # output image = (32,32,512)
     x = Conv2DTranspose(64, (3, 3), activation="relu", padding="same", strides=2)(x)
-    # ouptup image = (64, 64, 64)
-    x = UpSampling2D((2, 2))(x)
-    # ouptup image = (128, 128, 64)
+    # ouptup image = (64, 64, 256)
     x = Conv2D(3, (3, 3), activation="sigmoid", padding="same")(x)
     # ouptup image = (128, 128, 3)
 

@@ -12,12 +12,18 @@ from data import IMG_HEIGHT, IMG_WIDTH
 g_latent = []
 
 
-def get_vae(model_name):
+def get_ae(model_name):
     autoencoder = load_model(model_name)
-    z = autoencoder.layers[10]
 
-    encoder = Model(autoencoder.input, z.output)
-    decoder = autoencoder.layers[11]
+    return autoencoder
+
+
+def get_vae(model_name):
+    variational_autoencoder = load_model(model_name)
+    z = variational_autoencoder.layers[10]
+
+    encoder = Model(variational_autoencoder.input, z.output)
+    decoder = variational_autoencoder.layers[11]
 
     return encoder, decoder
 
@@ -34,6 +40,21 @@ def encode_decode(encoder, decoder, img):
     output = decoder.predict(latent)
 
     return latent[0], (output * 255).astype(np.uint8)[0]
+
+
+def run_input_output_img_ae(ae, file):
+    input_img = Image.open(file).resize((IMG_WIDTH, IMG_HEIGHT))
+
+    input_img_arr = np.array(input_img) / 255
+    batch = np.zeros((1, IMG_WIDTH, IMG_HEIGHT, 3))
+    batch[0, :, :, :] = input_img_arr
+
+    output = ae.predict(batch)[0]
+    print(output)
+
+    output_img = Image.fromarray((output * 255).astype(np.uint8))
+
+    return input_img, output_img
 
 
 def run_input_output_imgs(encoder, decoder, file):

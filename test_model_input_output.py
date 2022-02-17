@@ -2,10 +2,20 @@ from glob import glob
 
 from PIL import Image, ImageDraw, ImageFont
 
-from latent_interpolation import get_vae, run_input_output_imgs
+from latent_interpolation import (get_ae, get_vae, run_input_output_img_ae,
+                                  run_input_output_imgs)
 
 
-def main():
+def test_normal_ae():
+    files = glob("./archive/images/*.jpg")[:5]
+    model_name = "./models/convAE_v1.h5"
+    ae = get_ae(model_name)
+    in_img, out_img = run_input_output_img_ae(ae, files[0])
+    in_img.save("test1.jpg")
+    out_img.save("test2.jpg")
+
+
+def test_vae():
     files = glob("./archive/images/*.jpg")[:5]
     model_names = [
         "./models/bigVAE_256.h5",
@@ -46,6 +56,10 @@ def main():
     draw3.text((542, 0), texts[2], (255, 255, 255), font=font)
 
     new_im.save("blury_test.jpg")
+
+
+def main():
+    test_normal_ae()
 
 
 if __name__ == "__main__":
